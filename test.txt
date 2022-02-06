@@ -1,0 +1,66 @@
+module palu_unit_tb();
+    reg signed [7:0] a;
+    reg signed [7:0] b;
+    reg [1:0] s;
+    reg [7:0] expected;
+    wire signed [7:0] f;
+    wire ovf;
+    
+    eightbit_palu UUT(
+        .a(a),
+        .b(b),
+        .s(s),
+        .f(f),
+        .ovf(ovf));
+        
+        initial begin
+        # 0
+        s = 2'd0;
+        a = 8'd0; b = 8'd0; expected = 8'd0; # 10;
+        a = 8'd12; b = 8'd34; expected = 8'd46; # 10;
+        a = -8'd12; b = -8'd34; expected = -8'd46; # 10;
+        a = 8'd100; b = -8'd50; expected = 8'd50; # 10;
+        a = -8'd100; b = 8'd50; expected = -8'd50; # 10;
+        a = 8'd100; b = 8'd100; expected = -8'd56; # 10;
+        a = -8'd100; b = -8'd100; expected = 8'd56; # 10;
+        a = 8'd3; b = 8'd0; expected = 8'd3; # 10;
+        a = -8'd3; b = 8'd0; expected = -8'd3; # 10;
+        a = 8'd1; b = 8'd1; expected = 8'd2; # 10;
+        a = 8'd75; b = 8'd100; expected = -8'd81; # 10;
+        
+        s = 2'd1;
+        a = 8'd0; b = 8'd0; expected = -8'd1; # 10;
+        a = 8'd12; b = 8'd34; expected = -8'd35; # 10;
+        a = -8'd12; b = -8'd34; expected = 8'd33; # 10;
+        a = 8'd100; b = -8'd50; expected = 8'd49; # 10;
+        a = -8'd100; b = 8'd50; expected = -8'd51; # 10;
+        a = 8'd100; b = 8'd100; expected = -8'd101; # 10;
+        a = -8'd100; b = -8'd100; expected = 8'd99; # 10;
+        a = 8'd2; b = 8'd3; expected = -8'd4; # 10;
+        a = 8'd1; b = 8'd1; expected = -8'd2; # 10;
+        
+        s = 2'd2;
+        a = 8'd0; b = 8'd0; expected = 8'd0; # 10;
+        a = -8'd1; b = -8'd1; expected = -8'd1; # 10;
+        a = 8'd15; b = 8'd35; expected = 8'd3; # 10;
+        a = -8'd12; b = -8'd34; expected = -8'd44; # 10;
+        a = 8'd100; b = -8'd50; expected = 8'd68; # 10;
+        a = 8'd100; b = 8'd100; expected = 8'd100; # 10;
+        a = -8'd100; b = -8'd100; expected = -8'd100; # 10;
+        a = 8'd127; b = 8'd1; expected = 8'd1; # 10;
+        a = 8'd75; b = 8'd102; expected = 8'd66; # 10;
+        
+        s = 2'd3;
+        a = 8'd0; b = 8'd0; expected = 8'd0; # 10;
+        a = 8'd12; b = 8'd34; expected = 8'd46; # 10;
+        a = -8'd12; b = -8'd34; expected = -8'd2; # 10;
+        a = -8'd100; b = 8'd50; expected = -8'd66; # 10;
+        a = 8'd100; b = 8'd100; expected = 8'd100; # 10;
+        a = 8'd3; b = 8'd0; expected = 8'd3; # 10;
+        a = 8'd1; b = 8'd1; expected = 8'd1; # 10;
+        a = -8'd1; b = -8'd1; expected = -8'd1; # 10;
+        end
+        initial begin
+        $monitor("time=%d,a=%b,b=%b,s=%b,ovf=%b,f=%b,expected=%b,result=%b",$time,a,b,s,ovf,f,expected,f==expected);
+        end
+endmodule
